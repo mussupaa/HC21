@@ -18,6 +18,7 @@
 #define BTN_RECORD_START   'r'
 #define BTN_RECORD_STOP   'x'
 #define BTN_RECORD_PLAY  'p'
+#define BTN_BIGWALK_FORWARD 'w'
 
 // Right Domain Key of Hand-Tour APP Control Interface
 #define BTN_MUSIC    '1' 
@@ -1348,7 +1349,6 @@ void setup()
     servoDetach();
     delays(2000);
     start();
-    memset(recorded_commands, 0, sizeof(recorded_commands));
 }
 
 /*
@@ -1445,6 +1445,20 @@ void Test_voltageMeasure(void) //Realization of Voltage Detection
             serial_flag = false;
             switch (irValue)
             {
+
+
+              case BTN_BIGWALK_FORWARD:
+                mp3.stopPlay();
+                int move1[] = {90, 100, 90, 90};
+                moveNServos(t * 0.5, move1);
+                delay(1000);
+
+                
+                int move2[] = {90, 100, 90, 180};
+                moveNServos(t * 0.5, move2);
+                delay(1000);
+                break;
+                
             case BTN_RECORD_PLAY:
                 Serial.println("play pressed");
                 mp3.stopPlay();
