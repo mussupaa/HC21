@@ -1590,7 +1590,6 @@ void Test_voltageMeasure(void) //Realization of Voltage Detection
                 irValue = '\0'; // Data Command Clearing Serial Cache
             }
         }
-
         switch (mode)
         {
         case IDLE:
