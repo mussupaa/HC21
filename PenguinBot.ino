@@ -864,6 +864,7 @@ bool sitdown()
     return false;
 }
 
+
 bool lateral_fuerte(boolean dir, int tempo)
 {
     if (dir)
@@ -1645,13 +1646,15 @@ void Test_voltageMeasure(void) //Realization of Voltage Detection
             switch (BTmode)
             {
             case FORWARD:
+                mp3.playSong(1, mp3.volume); // choppa
                 servoAttach();
                 walk(1, t * 3, 1);
                 servoDetach();
                 break;
             case BACKWAED:
+                mp3.playSong(2, mp3.volume); // wilhelm
                 servoAttach();
-                walk(1, t * 3, -1);
+                walk(1, t * 0.5, -2);
                 servoDetach();
                 break;
             case TURNRIGHT: 
@@ -1704,6 +1707,8 @@ void Test_voltageMeasure(void) //Realization of Voltage Detection
                     }
                 }
                 break;
+            
+            
             case DANCE:
                 if (danceFlag == true)
                 {
@@ -1711,7 +1716,7 @@ void Test_voltageMeasure(void) //Realization of Voltage Detection
                     delays(10);
                     mp3.stopPlay();
                     delays(10);
-                    mp3.playSong(danceIndex, mp3.volume);
+                    mp3.playSong(3, mp3.volume);
                     servoAttach();
                     switch (danceIndex)
                     {
