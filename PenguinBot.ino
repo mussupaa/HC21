@@ -15,7 +15,8 @@
 #define BTN_IDLE  's'    
 
 // Custom buttons
-#define BTN_RECORD   'r'
+#define BTN_RECORD_START   'r'
+#define BTN_RECORD_STOP   'x'
 
 // Right Domain Key of Hand-Tour APP Control Interface
 #define BTN_MUSIC    '1' 
@@ -148,6 +149,7 @@ int t = 1000;
 double pause = 0;
 char irValue = '\0';
 bool serial_flag = false;
+vector<char> recorded_commands;
 
 bool delays(unsigned long ms)
 {
@@ -1423,14 +1425,20 @@ void Test_voltageMeasure(void) //Realization of Voltage Detection
 
     void loop()
     {
-
     // /*
         if (irValue != '\0')// Bluetooth serial port data stream on app side (character acquisition is completed in timer 2)
         {
+          if(irValue == BTN_RECORD_STOP) {
+            
+          }
+            if (mode == RECORD) {
+              recorded_commands.push_back(irValue)
+              return;
+            }
             serial_flag = false;
             switch (irValue)
             {
-            case BTN_RECORD:
+            case BTN_RECORD_START:
                 mp3.stopPlay();
                 mode = RECORD;
                 break;
