@@ -145,7 +145,7 @@ unsigned long preMp3Millis;
 
 unsigned long preMp3MillisStop_OBSTACLE;
 unsigned long preMp3MillisStop_FOLLOW;
-int t = 1000;
+int t = 200;
 double pause = 0;
 char irValue = '\0';
 bool serial_flag = false;
