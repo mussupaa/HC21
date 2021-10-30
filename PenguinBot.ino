@@ -1348,6 +1348,7 @@ void setup()
     servoDetach();
     delays(2000);
     start();
+    memset(recorded_commands, 0, sizeof(recorded_commands));
 }
 
 /*
