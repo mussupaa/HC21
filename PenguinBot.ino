@@ -17,6 +17,7 @@
 // Custom buttons
 #define BTN_RECORD_START   'r'
 #define BTN_RECORD_STOP   'x'
+#define BTN_RECORD_PLAY  'p'
 
 // Right Domain Key of Hand-Tour APP Control Interface
 #define BTN_MUSIC    '1' 
@@ -119,6 +120,7 @@ Oscillator servo[N_SERVOS];
 enum MODE
 {
     RECORD,
+    RECORDING_PLAYBACK,
     IDLE,
     BLUETOOTH,
     OBSTACLE,
@@ -149,7 +151,8 @@ int t = 200;
 double pause = 0;
 char irValue = '\0';
 bool serial_flag = false;
-vector<char> recorded_commands;
+char recorded_commands[50];
+int recording_current_step = 0;
 
 bool delays(unsigned long ms)
 {
@@ -1426,19 +1429,42 @@ void Test_voltageMeasure(void) //Realization of Voltage Detection
     void loop()
     {
     // /*
-        if (irValue != '\0')// Bluetooth serial port data stream on app side (character acquisition is completed in timer 2)
+
+        bool playback = mode == RECORDING_PLAYBACK;
+        if (playback) {
+            irValue = recorded_commands[recording_current_step];
+            recording_current_step = recording_current_step + 1;
+        }
+        
+        if (irValue != '\0' || playback)// Bluetooth serial port data stream on app side (character acquisition is completed in timer 2)
         {
-          if(irValue == BTN_RECORD_STOP) {
-            
-          }
-            if (mode == RECORD) {
-              recorded_commands.push_back(irValue)
-              return;
+            Serial.println(irValue);
+            if (irValue == BTN_RECORD_STOP) {
+                Serial.println("stop pressed");
+                mode = IDLE;
+                playback = false;
             }
+            
+            if (mode == RECORD && !playback) {
+                Serial.println("recordmode: button recorded start");
+                recorded_commands[recording_current_step] = irValue;
+                recording_current_step = recording_current_step + 1;
+                Serial.println("recordmode: button recorded end");
+                irValue = '\0'; // Data Command Clearing Serial Cache
+                return;
+            }
+            
             serial_flag = false;
             switch (irValue)
             {
+            case BTN_RECORD_PLAY:
+                Serial.println("play pressed");
+                mp3.stopPlay();
+                recording_current_step = 0;
+                mode = RECORDING_PLAYBACK;
+                break;
             case BTN_RECORD_START:
+                Serial.println("record pressed");
                 mp3.stopPlay();
                 mode = RECORD;
                 break;
@@ -1601,15 +1627,15 @@ void Test_voltageMeasure(void) //Realization of Voltage Detection
             default:
                 break;
             }
+            
             if (serial_flag == false)
             {
                 irValue = '\0'; // Data Command Clearing Serial Cache
             }
         }
-        
+
         switch (mode)
         {
-
         case IDLE:
             mp3.stopPlay();
             servoDetach();
@@ -1714,5 +1740,9 @@ void Test_voltageMeasure(void) //Realization of Voltage Detection
                 break;
             default:
                 break;
+        }
+
+        if (playback) {
+            mode = RECORDING_PLAYBACK;
         }
     }
