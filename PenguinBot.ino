@@ -14,6 +14,9 @@
 #define BTN_RIGHT 'i'    
 #define BTN_IDLE  's'    
 
+// Custom buttons
+#define BTN_RECORD   'r'
+
 // Right Domain Key of Hand-Tour APP Control Interface
 #define BTN_MUSIC    '1' 
 #define BTN_DANCE    '2' 
@@ -114,6 +117,7 @@ Oscillator servo[N_SERVOS];
 
 enum MODE
 {
+    RECORD,
     IDLE,
     BLUETOOTH,
     OBSTACLE,
@@ -140,7 +144,7 @@ unsigned long preMp3Millis;
 
 unsigned long preMp3MillisStop_OBSTACLE;
 unsigned long preMp3MillisStop_FOLLOW;
-int t = 495;
+int t = 1000;
 double pause = 0;
 char irValue = '\0';
 bool serial_flag = false;
@@ -1426,6 +1430,10 @@ void Test_voltageMeasure(void) //Realization of Voltage Detection
             serial_flag = false;
             switch (irValue)
             {
+            case BTN_RECORD:
+                mp3.stopPlay();
+                mode = RECORD;
+                break;
             case BTN_UP:
                 mp3.stopPlay();
                 mode = BLUETOOTH;
@@ -1590,9 +1598,10 @@ void Test_voltageMeasure(void) //Realization of Voltage Detection
                 irValue = '\0'; // Data Command Clearing Serial Cache
             }
         }
-        mode = FOLLOW;
+        
         switch (mode)
         {
+
         case IDLE:
             mp3.stopPlay();
             servoDetach();
